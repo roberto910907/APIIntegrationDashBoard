@@ -1,0 +1,29 @@
+{
+  "env": {
+    "browser": true,
+    "es6": true
+  },
+  "extends": [
+    "airbnb-base",
+    "plugin:vue/recommended"
+  ],
+  "globals": {
+    "Atomics": true,
+    "SharedArrayBuffer": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "sourceType": "module"
+  },
+  "plugins": [
+    "vue"
+  ],
+  "rules": {
+    "vue/html-self-closing": "off",
+    "vue/html-closing-bracket-newline": "off",
+    "vue/max-attributes-per-line": "off",
+    "max-len": "off",
+    "import/no-unresolved": "off",
+    "no-param-reassign": "off"
+  }
+}

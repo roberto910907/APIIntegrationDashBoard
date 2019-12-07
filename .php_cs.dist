@@ -1,0 +1,26 @@
+<?php
+
+return PhpCsFixer\Config::create()
+    ->setUsingCache(false)
+    ->setRules([
+        '@PSR2'                             => true,
+        'concat_space'                      => ['spacing' => 'one'],
+        'no_empty_statement'                => true,
+        'no_unused_imports'                 => true,
+        'no_whitespace_in_blank_line'       => true,
+        'phpdoc_scalar'                     => true,
+        'phpdoc_inline_tag'                 => true,
+        'trailing_comma_in_multiline_array' => true,
+    ])
+    ->setLineEnding("\n")
+    ->setFinder(
+        PhpCsFixer\Finder::create()
+            ->in(__DIR__)
+            ->exclude([
+                'node_modules',
+                'web',
+                'storage',
+                'vendor',
+            ])
+    )
+;
