@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_type=1);
+
 namespace App\Http\Controllers;
 
 use App\Services\Interfaces\AdwordsDataServiceInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Illuminate\Support\Collection;
 
 class AdwordsDataController extends Controller
 {
@@ -21,10 +23,12 @@ class AdwordsDataController extends Controller
     }
 
     /**
-     * @return JsonResponse
+     * @param int $clientAdwordsId
+     *
+     * @return Collection
      */
-    public function listAdwordsData(): JsonResponse
+    public function listAdwordsData(int $clientAdwordsId): Collection
     {
-        return $this->adwordsDataService->asd();
+        return $this->adwordsDataService->getAdwordsData($clientAdwordsId);
     }
 }

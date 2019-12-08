@@ -9,6 +9,7 @@
     "license": "MIT",
     "require": {
         "php": "^7.2",
+        "ext-json": "*",
         "fideloper/proxy": "^4.0",
         "friendsofphp/php-cs-fixer": "^2.16",
         "googleads/googleads-php-lib": "^44.0",

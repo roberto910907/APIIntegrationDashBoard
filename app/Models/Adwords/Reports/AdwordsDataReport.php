@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_type=1);
+
 namespace App\Models\Adwords\Reports;
 
-use Exception;
+use App\Models\Adwords\Config\Config;
 use Google\AdsApi\AdWords\Reporting\v201809\DownloadFormat;
 use Google\AdsApi\AdWords\Reporting\v201809\ReportDefinition;
 use Google\AdsApi\AdWords\Reporting\v201809\ReportDefinitionDateRangeType;
@@ -11,62 +13,48 @@ use Google\AdsApi\AdWords\v201809\cm\ApiException;
 use Google\AdsApi\AdWords\v201809\cm\DateRange;
 use Google\AdsApi\AdWords\v201809\cm\ReportDefinitionReportType;
 use Google\AdsApi\AdWords\v201809\cm\Selector;
-use Illuminate\Console\Command;
-use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Log;
 
-class AdwordsDataReport extends ProcessorReportAbstract
+class AdwordsDataReport
 {
-    use ManufactureTrait;
-
     /**
-     * @var Command
+     * @var Config
      */
-    private $console;
-
-    /**
-     * @var ManufactureReportConsolidateRepositoryInterface
-     */
-    private $manufactureReportConsolidateRepository;
-
-    /**
-     * @param string $name
-     * @param ManufactureReportConsolidateRepositoryInterface $manufactureReportConsolidateRepository
-     */
-    public function __construct(
-        string $name,
-        ManufactureReportConsolidateRepositoryInterface $manufactureReportConsolidateRepository
-    ) {
-        parent::__construct($name);
-        $this->manufactureReportConsolidateRepository = $manufactureReportConsolidateRepository;
-    }
+    private $config;
 
     /**
      * {@inheritdoc}
      */
-    public function run(Command $console): void
+    public function run(): string
     {
-        $this->console = $console;
+        try {
+            return $this->getReportData();
+        } catch (\Exception $exception) {
+            Log::error($exception->getMessage());
 
-        $data = $this->getData();
-
-        if ('' === trim($data)) {
-            $this->console->info('[' . now()->toDateTimeString() . '] No LogTemplate data!');
-
-            return;
+            return $exception->getMessage();
         }
-
-        $this->insertDataToDb(Processor::processReportDefinition($data));
     }
 
     /**
-     * Get a performance report.
+     * @param Config $config
      *
+     * @return self
+     */
+    public function setConfig(Config $config): self
+    {
+        $this->config = $config;
+
+        return $this;
+    }
+
+    /**
      * @method getAccountPerformaceReport
      *
      * @return string
      * @throws ApiException
      */
-    private function getData(): string
+    private function getReportData(): string
     {
         // Create Selector.
         $selector = new Selector();
@@ -79,17 +67,12 @@ class AdwordsDataReport extends ProcessorReportAbstract
             'Cost',
         ]);
 
-        $selector->setDateRange(
-            new DateRange(
-                $this->config->getRange()['start']->format('Ymd'),
-                $this->config->getRange()['end']->format('Ymd')
-            )
-        );
+        $selector->setDateRange(new DateRange('20191201', '20191207'));
 
         // Create report definition.
         $reportDefinition = new ReportDefinition();
         $reportDefinition->setSelector($selector);
-        $reportDefinition->setReportName('GMLog Template Report #' . uniqid('report', true));
+        $reportDefinition->setReportName('Adwords Report #' . uniqid('report', true));
         $reportDefinition->setDateRangeType(ReportDefinitionDateRangeType::CUSTOM_DATE);
         $reportDefinition->setReportType(ReportDefinitionReportType::SEARCH_QUERY_PERFORMANCE_REPORT);
         $reportDefinition->setDownloadFormat(DownloadFormat::CSV);
@@ -102,48 +85,10 @@ class AdwordsDataReport extends ProcessorReportAbstract
      *
      * @return string
      *
-     * @throws \Google\AdsApi\AdWords\v201809\cm\ApiException
+     * @throws ApiException
      */
     protected function getDownloadData(ReportDefinition $reportDefinition): string
     {
         return (new ReportDownloader($this->config->getSession()))->downloadReport($reportDefinition)->getAsString();
-    }
-
-    /**
-     *
-     * @param array $data An array of account data
-     *
-     * @throws QueryException
-     * @throws Exception
-     */
-    private function insertDataToDb($data): void
-    {
-        $items = collect($data)->map(function ($item) {
-            $extra = [
-                'placement_id' => 0,
-                'site_id' => 0,
-            ];
-            $data = [
-                'campaign_name' => $item[3], // As Creative_id
-                'report_date' => $item[0],
-                'campaign_id' => $item[2],
-                'account_id' => $this->config->getClientId(),
-                'account_name' => $item[1], // As Ad_Group_Id
-                'provider' => GMReportLookup::GOOGLE_PROVIDER,
-                'spend' => (float) ($item[5] / 1000000),
-                'impressions' => $item[4],
-                'report_type' => ProcessorInterface::LOGS_REPORT_TYPE,
-                'extra' => json_encode($extra),
-            ];
-
-            return array_merge($data, $this->setDefaultFieldsConsolidation());
-        });
-
-        try {
-            $this->manufactureReportConsolidateRepository->insertBulkCollection($items);
-        } catch (QueryException $e) {
-            Log::error($e->getMessage());
-            throw new \RuntimeException($e->getCode());
-        }
     }
 }
