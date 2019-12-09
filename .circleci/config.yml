@@ -59,10 +59,10 @@ jobs:
             asdf plugin-add python
             ~/.asdf/plugins/nodejs/bin/import-release-team-keyring
       - checkout
-#      - restore_cache:
-#          keys:
-#            - v4-asdf-installs-{{ checksum ".tool-versions" }}
-#            - v4-asdf-installs-
+      - restore_cache:
+          keys:
+            - v4-asdf-installs-{{ checksum ".tool-versions" }}
+            - v4-asdf-installs-
       - run:
           name: Installing tools
           command: |
@@ -73,14 +73,14 @@ jobs:
             pecl install pcov || true
             cp .circleci/php.ini ~/.asdf/installs/php/$(asdf current php | awk '{print $1}')/php.ini
             asdf reshim php
-#      - save_cache:
-#          key: v4-asdf-installs-{{ checksum ".tool-versions" }}
-#          paths:
-#            - ~/.asdf/installs
-#      - restore_cache:
-#          keys:
-#            - v1-npm-{{ checksum "package-lock.json" }}
-#            - v1-npm-
+      - save_cache:
+          key: v4-asdf-installs-{{ checksum ".tool-versions" }}
+          paths:
+            - ~/.asdf/installs
+      - restore_cache:
+          keys:
+            - v1-npm-{{ checksum "package-lock.json" }}
+            - v1-npm-
       - run:
           name: Installing Node.js dependencies
           command: npm install
