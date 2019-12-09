@@ -103,9 +103,7 @@ jobs:
             - vendor
       - run:
           name: Running database migrations
-          command: |
-            psql < database/20180406_initial_db.sql
-            php artisan migrate
+          command: php artisan migrate
       - run:
           name: Compiling assets
           command: npm run dev
