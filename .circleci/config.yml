@@ -59,10 +59,10 @@ jobs:
             asdf plugin-add python
             ~/.asdf/plugins/nodejs/bin/import-release-team-keyring
       - checkout
-      - restore_cache:
-          keys:
-            - v4-asdf-installs-{{ checksum ".tool-versions" }}
-            - v4-asdf-installs-
+#      - restore_cache:
+#          keys:
+#            - v4-asdf-installs-{{ checksum ".tool-versions" }}
+#            - v4-asdf-installs-
       - run:
           name: Installing tools
           command: |
