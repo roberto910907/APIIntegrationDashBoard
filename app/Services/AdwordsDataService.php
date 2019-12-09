@@ -28,27 +28,7 @@ class AdwordsDataService implements AdwordsDataServiceInterface
     public function getAdwordsData(int $clientAdwordsId): Collection
     {
         $config = (new Config())->setSession(Session::create($clientAdwordsId));
-        $reportData = $this->adwordsDataReport->setConfig($config)->run();
 
-        return $this->processReportResult($reportData);
-    }
-
-    /**
-     * @param string $reportData
-     *
-     * @return Collection
-     */
-    public function processReportResult(string $reportData): Collection
-    {
-        $dataArray = [];
-        $lines = explode("\n", $reportData);
-
-        foreach ($lines as $line) {
-            if (strlen($line) > 2) {
-                $dataArray[] = str_getcsv($line);
-            }
-        }
-
-        return collect($dataArray);
+        return $this->adwordsDataReport->setConfig($config)->run();
     }
 }

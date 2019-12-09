@@ -1,1 +1,14 @@
-require('./bootstrap');
+import Vue from 'vue';
+import VueGoodTable from 'vue-good-table';
+import store from './store';
+import router from './router';
+
+import 'vue-good-table/dist/vue-good-table.css'
+
+Vue.use(VueGoodTable);
+
+export const app = new Vue({
+    el: '#app',
+    router,
+    store
+});

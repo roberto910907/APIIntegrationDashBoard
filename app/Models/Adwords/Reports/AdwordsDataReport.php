@@ -13,6 +13,7 @@ use Google\AdsApi\AdWords\v201809\cm\ApiException;
 use Google\AdsApi\AdWords\v201809\cm\DateRange;
 use Google\AdsApi\AdWords\v201809\cm\ReportDefinitionReportType;
 use Google\AdsApi\AdWords\v201809\cm\Selector;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 
 class AdwordsDataReport
@@ -25,14 +26,14 @@ class AdwordsDataReport
     /**
      * {@inheritdoc}
      */
-    public function run(): string
+    public function run(): Collection
     {
         try {
-            return $this->getReportData();
+            return $this->processReportResult($this->getReportData());
         } catch (\Exception $exception) {
             Log::error($exception->getMessage());
 
-            return $exception->getMessage();
+            return collect();
         }
     }
 
@@ -46,6 +47,25 @@ class AdwordsDataReport
         $this->config = $config;
 
         return $this;
+    }
+
+    /**
+     * @param string $reportData
+     *
+     * @return Collection
+     */
+    public function processReportResult(string $reportData): Collection
+    {
+        $dataArray = [];
+        $lines = explode("\n", $reportData);
+
+        foreach ($lines as $line) {
+            if (strlen($line) > 2) {
+                $dataArray[] = str_getcsv($line);
+            }
+        }
+
+        return collect($dataArray);
     }
 
     /**

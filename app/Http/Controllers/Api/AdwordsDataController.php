@@ -2,8 +2,9 @@
 
 declare(strict_type=1);
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Services\Interfaces\AdwordsDataServiceInterface;
 use Illuminate\Support\Collection;
 
@@ -23,12 +24,12 @@ class AdwordsDataController extends Controller
     }
 
     /**
-     * @param int $clientAdwordsId
+     * @param string $clientAdwordsId
      *
      * @return Collection
      */
-    public function listAdwordsData(int $clientAdwordsId): Collection
+    public function listAdwordsData(string $clientAdwordsId): Collection
     {
-        return $this->adwordsDataService->getAdwordsData($clientAdwordsId);
+        return $this->adwordsDataService->getAdwordsData((int) $clientAdwordsId);
     }
 }

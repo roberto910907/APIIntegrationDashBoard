@@ -11,5 +11,5 @@
 */
 
 Route::group(['prefix' => 'v1'], function () {
-    Route::get('/adwords_data/{clientAdwordsId}', 'AdwordsDataController@listAdwordsData')->name('list_adwords_data');
+    Route::get('/adwords_data/{clientAdwordsId}', 'Api\AdwordsDataController@listAdwordsData')->name('list_adwords_data');
 });
