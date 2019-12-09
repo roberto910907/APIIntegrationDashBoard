@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Services\AdwordsDataService;
+use App\Services\Interfaces\AdwordsDataServiceInterface;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -13,7 +15,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->bind(AdwordsDataServiceInterface::class, AdwordsDataService::class);
     }
 
     /**
@@ -23,6 +25,5 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
     }
 }
