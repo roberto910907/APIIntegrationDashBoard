@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Repositories;
+namespace App\Repositories\Traits;
 
 use App\Exceptions\Repository\NotFoundException;
 use Illuminate\Database\Eloquent\Model;
@@ -59,18 +59,6 @@ trait CommonRepository
     public function updateWithWhere(array $whereClause, array $modelData): bool
     {
         return (bool) $this->getModel()->newQuery()->where($whereClause)->update($modelData);
-    }
-
-    /**
-     * @param \Closure $callback
-     *
-     * @throws \Throwable
-     *
-     * @return mixed
-     */
-    public function transaction(\Closure $callback)
-    {
-        return $this->getModel()->getConnection()->transaction($callback);
     }
 
     /**

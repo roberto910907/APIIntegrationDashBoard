@@ -47,15 +47,6 @@ interface CommonRepositoryInterface
     public function updateWithWhere(array $whereClause, array $modelData): bool;
 
     /**
-     * @param $callback
-     *
-     * @return mixed
-     *
-     * @throws \Throwable
-     */
-    public function transaction($callback);
-
-    /**
      * @param int $id
      *
      * @return Model|null

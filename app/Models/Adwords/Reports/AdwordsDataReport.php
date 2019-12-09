@@ -5,6 +5,7 @@ declare(strict_type=1);
 namespace App\Models\Adwords\Reports;
 
 use App\Models\Adwords\Config\Config;
+use Carbon\Carbon;
 use Google\AdsApi\AdWords\Reporting\v201809\DownloadFormat;
 use Google\AdsApi\AdWords\Reporting\v201809\ReportDefinition;
 use Google\AdsApi\AdWords\Reporting\v201809\ReportDefinitionDateRangeType;
@@ -24,7 +25,7 @@ class AdwordsDataReport
     private $config;
 
     /**
-     * {@inheritdoc}
+     * @return Collection
      */
     public function run(): Collection
     {
@@ -50,6 +51,14 @@ class AdwordsDataReport
     }
 
     /**
+     * @return Config
+     */
+    public function getConfig(): Config
+    {
+        return $this->config;
+    }
+
+    /**
      * @param string $reportData
      *
      * @return Collection
@@ -60,21 +69,35 @@ class AdwordsDataReport
         $lines = explode("\n", $reportData);
 
         foreach ($lines as $line) {
-            if (strlen($line) > 2) {
-                $dataArray[] = str_getcsv($line);
+            if (strlen($line) < 2) {
+                continue;
             }
+
+            $lineAsArray = str_getcsv($line);
+
+            $dataArray[] = [
+                'report_date' => $lineAsArray[0],
+                'ad_group_id' => (int) $lineAsArray[1],
+                'campaign_id' => (int) $lineAsArray[2],
+                'creative_id' => (int) $lineAsArray[3],
+                'impressions' => (int) $lineAsArray[4],
+                'clicks' => (int) $lineAsArray[5],
+                'cost' => (double) ($lineAsArray[6] / 1000000),
+                'client_adwords_id' => $this->getConfig()->getClientId(),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ];
         }
 
         return collect($dataArray);
     }
 
     /**
-     * @method getAccountPerformaceReport
+     * @throws ApiException
      *
      * @return string
-     * @throws ApiException
      */
-    private function getReportData(): string
+    protected function getReportData(): string
     {
         // Create Selector.
         $selector = new Selector();
@@ -84,10 +107,11 @@ class AdwordsDataReport
             'CampaignId',
             'CreativeId',
             'Impressions',
+            'Clicks',
             'Cost',
         ]);
 
-        $selector->setDateRange(new DateRange('20191201', '20191207'));
+        $selector->setDateRange(new DateRange('20191206', '20191207'));
 
         // Create report definition.
         $reportDefinition = new ReportDefinition();
@@ -103,9 +127,9 @@ class AdwordsDataReport
     /**
      * @param ReportDefinition $reportDefinition
      *
-     * @return string
-     *
      * @throws ApiException
+     *
+     * @return string
      */
     protected function getDownloadData(ReportDefinition $reportDefinition): string
     {

@@ -18628,6 +18628,7 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "div",
+    { staticClass: "m-15" },
     [
       _c("h1", [_vm._v("Adwords Client Information")]),
       _vm._v(" "),
@@ -34956,7 +34957,25 @@ var state = {
     columns: [{
       field: 'id',
       label: 'Id',
-      sortField: 'Id'
+      type: 'number'
+    }, {
+      field: 'ad_group_id',
+      label: 'Ad Group Id'
+    }, {
+      field: 'campaign_id',
+      label: 'Campaign Id'
+    }, {
+      field: 'creative_id',
+      label: 'Creative Id'
+    }, {
+      field: 'clicks',
+      label: 'Clicks'
+    }, {
+      field: 'impressions',
+      label: 'Impressions'
+    }, {
+      field: 'cost',
+      label: 'Cost'
     }],
     pagination: {
       enabled: true,
@@ -34966,7 +34985,7 @@ var state = {
     sort: {
       enabled: true,
       initialSortBy: {
-        field: 'username',
+        field: 'id',
         type: 'asc'
       }
     },
@@ -34989,8 +35008,13 @@ var actions = {
         switch (_context.prev = _context.next) {
           case 0:
             commit = _ref.commit, state = _ref.state;
-            _context.prev = 1;
-            console.log(state.adwordsSearchId);
+
+            if (!(state.adwordsSearchId !== '')) {
+              _context.next = 12;
+              break;
+            }
+
+            _context.prev = 2;
             _context.next = 5;
             return _babel_runtime_regenerator_index_js__WEBPACK_IMPORTED_MODULE_0___default.a.awrap(_api_adwords__WEBPACK_IMPORTED_MODULE_1__["default"].getAdwordsList(state.adwordsSearchId));
 
@@ -35002,7 +35026,7 @@ var actions = {
 
           case 9:
             _context.prev = 9;
-            _context.t0 = _context["catch"](1);
+            _context.t0 = _context["catch"](2);
             commit(FETCH_ADWORDS_ERROR, _context.t0);
 
           case 12:
@@ -35010,7 +35034,7 @@ var actions = {
             return _context.stop();
         }
       }
-    }, null, null, [[1, 9]]);
+    }, null, null, [[2, 9]]);
   }
 };
 /* harmony default export */ __webpack_exports__["default"] = ({

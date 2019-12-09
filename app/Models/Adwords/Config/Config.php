@@ -59,6 +59,14 @@ class Config
     }
 
     /**
+     * @return AdWordsSession
+     */
+    public function getSession(): AdWordsSession
+    {
+        return $this->session;
+    }
+
+    /**
      *
      * @return int
      */
@@ -75,13 +83,5 @@ class Config
     public function getRange(): array
     {
         return $this->range;
-    }
-
-    /**
-     * @return AdWordsSession
-     */
-    public function getSession(): AdWordsSession
-    {
-        return $this->session;
     }
 }

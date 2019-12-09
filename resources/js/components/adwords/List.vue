@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="m-15">
     <h1>Adwords Client Information</h1>
     <input type="text" name="search_adwords" v-model="adwordsSearchId" @change="getAdwordsList"/>
 

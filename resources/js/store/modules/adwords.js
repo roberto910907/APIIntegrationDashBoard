@@ -11,7 +11,31 @@ const state = {
             {
                 field: 'id',
                 label: 'Id',
-                sortField: 'Id',
+                type: 'number',
+            },
+            {
+                field: 'ad_group_id',
+                label: 'Ad Group Id',
+            },
+            {
+                field: 'campaign_id',
+                label: 'Campaign Id',
+            },
+            {
+                field: 'creative_id',
+                label: 'Creative Id',
+            },
+            {
+                field: 'clicks',
+                label: 'Clicks',
+            },
+            {
+                field: 'impressions',
+                label: 'Impressions',
+            },
+            {
+                field: 'cost',
+                label: 'Cost',
             },
         ],
         pagination: {
@@ -21,7 +45,7 @@ const state = {
         },
         sort: {
             enabled: true,
-            initialSortBy: {field: 'username', type: 'asc'},
+            initialSortBy: {field: 'id', type: 'asc'},
         },
         search: {
             enabled: true,
@@ -41,13 +65,14 @@ const mutations = {
 
 const actions = {
     async getAdwordsList({commit, state}) {
-        try {
-            console.log(state.adwordsSearchId);
-            const response = await AdwordsApi.getAdwordsList(state.adwordsSearchId);
-            
-            commit(FETCH_ADWORDS_SUCCESS, response.data);
-        } catch (error) {
-            commit(FETCH_ADWORDS_ERROR, error);
+        if (state.adwordsSearchId !== '') {
+            try {
+                const response = await AdwordsApi.getAdwordsList(state.adwordsSearchId);
+                
+                commit(FETCH_ADWORDS_SUCCESS, response.data);
+            } catch (error) {
+                commit(FETCH_ADWORDS_ERROR, error);
+            }
         }
     },
 };

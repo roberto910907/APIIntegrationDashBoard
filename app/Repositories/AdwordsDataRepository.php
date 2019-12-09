@@ -6,6 +6,7 @@ namespace App\Repositories;
 
 use App\Models\Adwords\AdwordsData;
 use App\Repositories\Interfaces\CommonRepositoryInterface;
+use App\Repositories\Traits\CommonRepository;
 use Illuminate\Database\Eloquent\Model;
 
 class AdwordsDataRepository implements CommonRepositoryInterface
